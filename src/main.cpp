@@ -92,10 +92,10 @@ void drawCat(M5EPD_Canvas &c, int x, int y) {
     c.drawTriangle(x + r - 5, y - r + 5, x + r + 10, y - r - 22, x + 5, y - r + 2, 0);
     c.fillTriangle(x + r - 3, y - r + 2, x + r + 5, y - r - 14, x + 8, y - r + 1, 10);
 
-    // Eyes
-    c.fillEllipse(x - 11, y - 6, 7, 5, 0);
-    c.fillEllipse(x + 11, y - 6, 7, 5, 0);
-    c.fillCircle(x - 9, y - 8, 2, 15);
+    // Eyes (circles with shine dot)
+    c.fillCircle(x - 11, y - 6, 6, 0);
+    c.fillCircle(x + 11, y - 6, 6, 0);
+    c.fillCircle(x - 9,  y - 8, 2, 15);
     c.fillCircle(x + 13, y - 8, 2, 15);
 
     // Nose
@@ -105,15 +105,32 @@ void drawCat(M5EPD_Canvas &c, int x, int y) {
     c.drawLine(x, y + 9, x - 7, y + 15, 0);
     c.drawLine(x, y + 9, x + 7, y + 15, 0);
 
-    // Whiskers left
-    c.drawLine(x - 8, y + 3, x - 34, y,    0);
-    c.drawLine(x - 8, y + 6, x - 34, y + 6, 0);
-    c.drawLine(x - 8, y + 9, x - 34, y + 12, 0);
+    // Whiskers left (white — visible on black background outside head)
+    c.drawLine(x - 8, y + 3,  x - 34, y,      15);
+    c.drawLine(x - 8, y + 6,  x - 34, y + 6,  15);
+    c.drawLine(x - 8, y + 9,  x - 34, y + 12, 15);
 
     // Whiskers right
-    c.drawLine(x + 8, y + 3, x + 34, y,    0);
-    c.drawLine(x + 8, y + 6, x + 34, y + 6, 0);
-    c.drawLine(x + 8, y + 9, x + 34, y + 12, 0);
+    c.drawLine(x + 8, y + 3,  x + 34, y,      15);
+    c.drawLine(x + 8, y + 6,  x + 34, y + 6,  15);
+    c.drawLine(x + 8, y + 9,  x + 34, y + 12, 15);
+}
+
+void drawWrappedText(M5EPD_Canvas &c, String text, int x, int y, int maxChars, int lineH) {
+    int curY = y;
+    while (text.length() > 0) {
+        if ((int)text.length() <= maxChars) {
+            c.drawString(text, x, curY);
+            break;
+        }
+        int breakAt = maxChars;
+        for (int i = maxChars; i > 0; i--) {
+            if (text[i] == ' ') { breakAt = i; break; }
+        }
+        c.drawString(text.substring(0, breakAt), x, curY);
+        text = text.substring(breakAt + 1);
+        curY += lineH;
+    }
 }
 
 void updateBody() {
@@ -121,9 +138,7 @@ void updateBody() {
     body.setTextFont(1);
     body.setTextColor(15);
     body.setTextSize(5);
-    body.setTextWrap(true);
-    body.setCursor(20, 20);
-    body.print(currentStatus);
+    drawWrappedText(body, currentStatus, 20, 20, 31, 45);
 
     // Get time from ESP32 RTC
     struct tm timeinfo;
