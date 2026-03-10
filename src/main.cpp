@@ -75,19 +75,55 @@ void updateHeader() {
     header.pushCanvas(0, 0, UPDATE_MODE_GC16);
 }
 
+void drawCat(M5EPD_Canvas &c, int x, int y) {
+    int r = 30;
+
+    // Head
+    c.fillCircle(x, y, r, 15);
+    c.drawCircle(x, y, r, 0);
+
+    // Left ear
+    c.fillTriangle(x - r + 5, y - r + 5, x - r - 10, y - r - 22, x - 5, y - r + 2, 15);
+    c.drawTriangle(x - r + 5, y - r + 5, x - r - 10, y - r - 22, x - 5, y - r + 2, 0);
+    c.fillTriangle(x - r + 3, y - r + 2, x - r - 5, y - r - 14, x - 8, y - r + 1, 10);
+
+    // Right ear
+    c.fillTriangle(x + r - 5, y - r + 5, x + r + 10, y - r - 22, x + 5, y - r + 2, 15);
+    c.drawTriangle(x + r - 5, y - r + 5, x + r + 10, y - r - 22, x + 5, y - r + 2, 0);
+    c.fillTriangle(x + r - 3, y - r + 2, x + r + 5, y - r - 14, x + 8, y - r + 1, 10);
+
+    // Eyes
+    c.fillEllipse(x - 11, y - 6, 7, 5, 0);
+    c.fillEllipse(x + 11, y - 6, 7, 5, 0);
+    c.fillCircle(x - 9, y - 8, 2, 15);
+    c.fillCircle(x + 13, y - 8, 2, 15);
+
+    // Nose
+    c.fillTriangle(x - 3, y + 4, x + 3, y + 4, x, y + 9, 8);
+
+    // Mouth
+    c.drawLine(x, y + 9, x - 7, y + 15, 0);
+    c.drawLine(x, y + 9, x + 7, y + 15, 0);
+
+    // Whiskers left
+    c.drawLine(x - 8, y + 3, x - 34, y,    0);
+    c.drawLine(x - 8, y + 6, x - 34, y + 6, 0);
+    c.drawLine(x - 8, y + 9, x - 34, y + 12, 0);
+
+    // Whiskers right
+    c.drawLine(x + 8, y + 3, x + 34, y,    0);
+    c.drawLine(x + 8, y + 6, x + 34, y + 6, 0);
+    c.drawLine(x + 8, y + 9, x + 34, y + 12, 0);
+}
+
 void updateBody() {
     body.fillCanvas(0);
     body.setTextFont(1);
     body.setTextColor(15);
-
-    // Auto-size text
-    if (currentStatus.length() > 25) {
-        body.setTextSize(3);
-    } else {
-        body.setTextSize(5);
-    }
-
-    body.drawString(currentStatus, 20, 20);
+    body.setTextSize(5);
+    body.setTextWrap(true);
+    body.setCursor(20, 20);
+    body.print(currentStatus);
 
     // Get time from ESP32 RTC
     struct tm timeinfo;
@@ -95,10 +131,12 @@ void updateBody() {
     if (getLocalTime(&timeinfo)) {
         char buffer[32];
         strftime(buffer, sizeof(buffer), "Last updated: %H:%M", &timeinfo);
-        body.drawString(buffer, 20, 120);
+        body.drawString(buffer, 20, 300);
     } else {
-        body.drawString(">>> Last updated: --:--", 20, 120);
+        body.drawString("Last updated: --:--", 20, 300);
     }
+
+    drawCat(body, 790, 315);
 
     body.pushCanvas(0, 120, UPDATE_MODE_GC16);
 }
@@ -167,7 +205,7 @@ void setup() {
     updateHeader(); 
 
     // Body canvas
-    body.createCanvas(960, 200);
+    body.createCanvas(960, 380);
     updateBody();
 
     // WiFi
