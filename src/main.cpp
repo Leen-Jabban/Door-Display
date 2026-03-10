@@ -146,12 +146,12 @@ void updateBody() {
     if (getLocalTime(&timeinfo)) {
         char buffer[32];
         strftime(buffer, sizeof(buffer), "Last updated: %H:%M", &timeinfo);
-        body.drawString(buffer, 20, 300);
+        body.drawString(buffer, 20, 200);
     } else {
-        body.drawString("Last updated: --:--", 20, 300);
+        body.drawString("Last updated: --:--", 20, 200);
     }
 
-    drawCat(body, 790, 315);
+    drawCat(body, 790, 215);
 
     body.pushCanvas(0, 120, UPDATE_MODE_GC16);
 }
@@ -220,7 +220,7 @@ void setup() {
     updateHeader(); 
 
     // Body canvas
-    body.createCanvas(960, 380);
+    body.createCanvas(960, 260);
     updateBody();
 
     // WiFi
