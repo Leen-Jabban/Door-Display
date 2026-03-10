@@ -76,44 +76,39 @@ void updateHeader() {
 }
 
 void drawCat(M5EPD_Canvas &c, int x, int y) {
-    int r = 30;
-
     // Head
-    c.fillCircle(x, y, r, 15);
-    c.drawCircle(x, y, r, 0);
+    c.fillCircle(x, y, 20, 15);
 
-    // Left ear
-    c.fillTriangle(x - r + 5, y - r + 5, x - r - 10, y - r - 22, x - 5, y - r + 2, 15);
-    c.drawTriangle(x - r + 5, y - r + 5, x - r - 10, y - r - 22, x - 5, y - r + 2, 0);
-    c.fillTriangle(x - r + 3, y - r + 2, x - r - 5, y - r - 14, x - 8, y - r + 1, 10);
+    // Left ear (two circles: outer white, inner gray)
+    c.fillCircle(x - 14, y - 22, 8, 15);
+    c.fillCircle(x - 14, y - 22, 4, 10);
 
     // Right ear
-    c.fillTriangle(x + r - 5, y - r + 5, x + r + 10, y - r - 22, x + 5, y - r + 2, 15);
-    c.drawTriangle(x + r - 5, y - r + 5, x + r + 10, y - r - 22, x + 5, y - r + 2, 0);
-    c.fillTriangle(x + r - 3, y - r + 2, x + r + 5, y - r - 14, x + 8, y - r + 1, 10);
+    c.fillCircle(x + 14, y - 22, 8, 15);
+    c.fillCircle(x + 14, y - 22, 4, 10);
 
-    // Eyes (circles with shine dot)
-    c.fillCircle(x - 11, y - 6, 6, 0);
-    c.fillCircle(x + 11, y - 6, 6, 0);
-    c.fillCircle(x - 9,  y - 8, 2, 15);
-    c.fillCircle(x + 13, y - 8, 2, 15);
+    // Eyes (black circles with white shine)
+    c.fillCircle(x - 8, y - 4, 5, 0);
+    c.fillCircle(x + 8, y - 4, 5, 0);
+    c.fillCircle(x - 6, y - 6, 2, 15);
+    c.fillCircle(x + 10, y - 6, 2, 15);
 
     // Nose
-    c.fillTriangle(x - 3, y + 4, x + 3, y + 4, x, y + 9, 8);
+    c.fillCircle(x, y + 5, 3, 8);
 
     // Mouth
-    c.drawLine(x, y + 9, x - 7, y + 15, 0);
-    c.drawLine(x, y + 9, x + 7, y + 15, 0);
+    c.drawLine(x, y + 8, x - 6, y + 14, 0);
+    c.drawLine(x, y + 8, x + 6, y + 14, 0);
 
-    // Whiskers left (white — visible on black background outside head)
-    c.drawLine(x - 8, y + 3,  x - 34, y,      15);
-    c.drawLine(x - 8, y + 6,  x - 34, y + 6,  15);
-    c.drawLine(x - 8, y + 9,  x - 34, y + 12, 15);
+    // Whiskers left (white — visible on black background)
+    c.drawLine(x - 5, y + 3,  x - 32, y,      15);
+    c.drawLine(x - 5, y + 5,  x - 32, y + 5,  15);
+    c.drawLine(x - 5, y + 8,  x - 32, y + 11, 15);
 
     // Whiskers right
-    c.drawLine(x + 8, y + 3,  x + 34, y,      15);
-    c.drawLine(x + 8, y + 6,  x + 34, y + 6,  15);
-    c.drawLine(x + 8, y + 9,  x + 34, y + 12, 15);
+    c.drawLine(x + 5, y + 3,  x + 32, y,      15);
+    c.drawLine(x + 5, y + 5,  x + 32, y + 5,  15);
+    c.drawLine(x + 5, y + 8,  x + 32, y + 11, 15);
 }
 
 void drawWrappedText(M5EPD_Canvas &c, String text, int x, int y, int maxChars, int lineH) {
@@ -146,12 +141,12 @@ void updateBody() {
     if (getLocalTime(&timeinfo)) {
         char buffer[32];
         strftime(buffer, sizeof(buffer), "Last updated: %H:%M", &timeinfo);
-        body.drawString(buffer, 20, 200);
+        body.drawString(buffer, 20, 155);
     } else {
-        body.drawString("Last updated: --:--", 20, 200);
+        body.drawString("Last updated: --:--", 20, 155);
     }
 
-    drawCat(body, 790, 215);
+    drawCat(body, 820, 173);
 
     body.pushCanvas(0, 120, UPDATE_MODE_GC16);
 }
@@ -220,7 +215,7 @@ void setup() {
     updateHeader(); 
 
     // Body canvas
-    body.createCanvas(960, 260);
+    body.createCanvas(960, 200);
     updateBody();
 
     // WiFi
